@@ -4,12 +4,12 @@ def ibr_classifier(game, message, target):
 	else:
 		level_zero = {}
 		for m in game.messages.keys():
-			level_one[m] = {}
+			level_zero[m] = {}
 			for t in game.targets.keys():
 				if target in game.sems[message]:
-					level_one[m][t] = 1.0/len(game.sems[message])
+					level_zero[m][t] = 1.0/len(game.sems[message])
 				else:
-					level_one[m][t] = 0
+					level_zero[m][t] = 0
 		level_one = posterior(game,level_zero)
 		level_two = posterior(game,level_one)
 		if is_solved(level_zero,message,target):
