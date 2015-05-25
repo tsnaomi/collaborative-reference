@@ -47,9 +47,9 @@ def generate_classified_reference_instances(F=3, T=3):
     return _classify_reference_instances(reference_instances)
 
 
+# this function produces a list of every possible Game instance, given F number
+# of features and T number of targets
 def _all_games(messages, F, T):
-    # this function produces a list of every possible Game instance, given F
-    # number of features and T number of targets
 
     def get_targets(vector):
         if F != 3 or T != 3:
@@ -76,12 +76,11 @@ def _all_games(messages, F, T):
     return [Game(messages, t, get_sems(t)) for t in targets]
 
 
+# this function produces a list of every possible reference instance given a
+# list of games, F number of features, and T number of targets; each reference
+# instance consists of a game, a message, and an intended target, returned in
+# the form of a dictionary
 def _all_reference_instances(games, messages, F, T):
-    # this function produces a list of every possible reference instance given
-    # a list of games, F number of features, and T number of targets
-
-    # each reference instance is a game 'game', a message 'message', and an
-    # an intended target 'target', returned in the form of a dictionary
 
     def get_ref(game, message, target):
         return {'game': game, 'message': message, 'target': target}
@@ -92,16 +91,13 @@ def _all_reference_instances(games, messages, F, T):
     return [get_ref(g, m, t) for g in games for m in messages for t in targets]
 
 
+# this function creates a messages dictionary given F number of identifying
+# features; e,g,, if F=4, this will return the following key-value pairs:
+#       'm0': [1, 0, 0, 0],
+#       'm1': [0, 1, 0, 0],
+#       'm2': [0, 0, 1, 0],
+#       'm3': [0, 0, 0, 1],
 def _create_messages_dict(F):
-    # this function creates a messages dictionary given F number of identifying
-    # features
-
-    # e,g,, if F=4, this will return the following key-value pairs:
-    #       'm0': [1, 0, 0, 0],
-    #       'm1': [0, 1, 0, 0],
-    #       'm2': [0, 0, 1, 0],
-    #       'm3': [0, 0, 0, 1],
-
     messages = {'m%s' % i: list(repeat(0, F)) for i in range(F)}
 
     for i in range(F):
@@ -110,11 +106,10 @@ def _create_messages_dict(F):
     return messages
 
 
+# given a list of reference instances, this function returns three lists
+# corresponding to Level 0, Level 1, and Level 2 instances, and discards any
+# level -1 instances (see ibr_classifier)
 def _classify_reference_instances(reference_instances):
-    # given a list of reference instances, this function returns three lists
-    # corresponding to Level 0, Level 1, and Level 2 instances, and discards
-    # level -1 instances (see ibr_classifier)
-
     level = {-1: [], 0: [], 1: [], 2: []}
 
     for i in reference_instances:
