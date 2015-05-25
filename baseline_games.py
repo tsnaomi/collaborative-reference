@@ -40,7 +40,7 @@ def generate_classified_reference_instances(F=3, T=3):
 
     Classification is done using the ibr_classifer.
     '''
-    messages = Messages if F == 3 else _create_messages_dict(F=F)
+    messages = Messages if F == 3 else _create_messages_dict(F)
     games = _all_games(messages, F, T)
     reference_instances = _all_reference_instances(games, messages, F, T)
 
