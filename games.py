@@ -121,6 +121,25 @@ def _classify_reference_instances(reference_instances):
 unsolvable, level0, level1, level2 = generate_classified_reference_instances()
 
 
+def Separable(game):
+    # check whether a game is seperable
+    # a game is separable iff there exists a bijection between messages and targets
+    # such that each message-target pair is solvable
+
+    messages = game.messages.keys()
+    targets = game.targets.keys()
+
+    for targets_in_some_order in permutations(targets):
+        for message, target in zip(messages, targets_in_some_order):
+            if ibr_classifier(game, message, target) == -1:
+                break
+        else:
+            return True
+
+    return False
+
+# separable games used to self-train
+sep_games = [game for game in all_games() if Separable(game)]
 
 # print len(unsolvable)
 # print len(level0)

@@ -1,7 +1,7 @@
-from baseline import *
 import numpy as np
 from distributedwordreps import ShallowNeuralNetwork
 import random
+import sys
 
 class ANNListener(object):
 
@@ -33,9 +33,13 @@ class ANNListener(object):
         return (targets.keys()[target_index])
 
 
-    def learn(self, speaker):
+    def learn(self, speaker, verbose=True):
         data = []
-        for game in self.games:
+        N = len(self.games)
+        for n, game in enumerate(self.games):
+            if verbose:
+                print "\rGenerating training data ({0} of {1})".format(n+1, N),
+                sys.stdout.flush()
             targets = game.targets
             input_targets = sum(targets.values(), [])
 
@@ -46,8 +50,9 @@ class ANNListener(object):
                 output_ann = np.zeros(len(game.messages))
                 output_ann[indx] = 1.0
                 data.append((input_ann, output_ann))
-
-        self.ann.train(training_data=data)
+        if verbose:
+            print "\nTraining the network..."
+        self.ann.train(training_data=data, display_progress=verbose)
         return data
 
 class ANNSpeaker(object):
@@ -86,9 +91,14 @@ class ANNSpeaker(object):
                 return message
 
 
-    def learn(self, listener):
+    def learn(self, listener, verbose=True):
         data = []
-        for game in self.games:
+        N = len(self.games)
+        for n, game in enumerate(self.games):
+            if verbose:
+                print "\rGenerating training data ({0} of {1})".format(n+1, N),
+                sys.stdout.flush()
+
             messages = game.messages
             targets = game.targets
             input_targets = sum(targets.values(), [])
@@ -100,8 +110,9 @@ class ANNSpeaker(object):
                         input_ann = input_targets + input_target_features
                         output_ann = game.messages[message]
                         data.append((input_ann, output_ann))
-
-        self.ann.train(training_data=data)
+        if verbose:
+            print "\nTraining the network..."
+        self.ann.train(training_data=data, display_progress=verbose)
         return data
 
 class LitSpeaker(object):
@@ -136,8 +147,8 @@ class LitListener(object):
 
         return targets[0]
 
-def SelfTrain(games, max_iter = 5, verbose = False,
-              speaker_hidden_dim=5, listener_hidden_dim=5,
+def SelfTrain(games, max_iter = 2, verbose = True,
+              speaker_hidden_dim=10, listener_hidden_dim=10,
               chain_init="literal_speaker"):
     if verbose:
         print "initialize ANN listeners and speakers"
@@ -151,17 +162,17 @@ def SelfTrain(games, max_iter = 5, verbose = False,
         if verbose:
             print "Iteration 1: start with literal speaker"
 
-        listener.learn(literal_speaker)
-        speaker.learn(listener)
+        listener.learn(literal_speaker, verbose)
+        speaker.learn(listener, verbose)
         if verbose:
             print "done"
 
         n_iter = 1
         while n_iter < max_iter:
             if verbose:
-                print "Iteration {0} out of {1}".format(n_iter, max_iter)
-            listener.learn(speaker)
-            speaker.learn(listener)
+                print "Iteration {0} out of {1}".format(n_iter + 1, max_iter)
+            listener.learn(speaker, verbose)
+            speaker.learn(listener, verbose)
             n_iter += 1
             if verbose:
                 print "done"
@@ -170,8 +181,8 @@ def SelfTrain(games, max_iter = 5, verbose = False,
         if verbose:
             print "Iteration 1: start with literal listener"
         literal_listener = LitListener(games)
-        speaker.learn(literal_listener)
-        listener.learn(speaker)
+        speaker.learn(literal_listener, verbose)
+        listener.learn(speaker, verbose)
         n_iter = 1
         if verbose:
             print "done"
@@ -179,8 +190,8 @@ def SelfTrain(games, max_iter = 5, verbose = False,
         while n_iter < max_iter:
             if verbose:
                 print "Iteration {0} out of {1}".format(n_iter + 1, max_iter)
-            speaker.learn(listener)
-            listener.learn(speaker)
+            speaker.learn(listener, verbose)
+            listener.learn(speaker, verbose)
             n_iter += 1
             if verbose:
                 print "done"
@@ -226,3 +237,14 @@ def Inspect(agent, N=-1):
         return InspectListener(agent, N=N)
     if agent.role == "speaker":
         return InspectSpeaker(agent, N=N)
+
+def EvaluateListener(listener, refs):
+    # evaluate listener on the set of refs 
+    N = len(refs)
+    correct = 0.0
+    for ref in refs:
+        if listener.interpret(ref["game"], ref["message"]) == ref["target"]:
+            correct += 1
+    
+    return correct / N
+

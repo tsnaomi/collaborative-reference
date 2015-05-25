@@ -331,7 +331,8 @@ class ShallowNeuralNetwork:
                 self.forward_propagation(ex)
                 error += self.backward_propagation(labels, alpha=alpha)           
             if display_progress:
-                print 'completed iteration %s; error is %s' % (iteration, error)
+                print '\rcompleted iteration %s; error is %s' % (iteration, error),
+                sys.stdout.flush()
             iteration += 1
                     
     def predict(self, ex):
