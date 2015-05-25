@@ -110,7 +110,7 @@ def _create_messages_dict(F):
     return messages
 
 
-def _classify_reference_instances(ref_instances):
+def _classify_reference_instances(reference_instances):
     '''Return three lists of level 0, 1, and 2 reference instances.'''
     # given a list of reference instances, this function returns three lists
     # corresponding to Level 0, Level 1, and Level 2 instances, and discards
@@ -118,7 +118,7 @@ def _classify_reference_instances(ref_instances):
 
     level = {-1: [], 0: [], 1: [], 2: []}
 
-    for i in ref_instances:
+    for i in reference_instances:
         level[ibr_classifier(**i)].append(i)
 
     return level[0], level[1], level[2]
