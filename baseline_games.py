@@ -71,8 +71,7 @@ def _all_games(messages, F, T):
         return {'hats': sems[0], 'glasses': sems[1], 'mustache': sems[2]}
 
     vectors = [p for c in combin(range(2), F * T) for p in permutations(c)]
-    vectors = [list(vector) for vector in set(vectors)]
-    targets = [get_targets(vector) for vector in vectors]
+    targets = [get_targets(list(vector)) for vector in set(vectors)]
 
     return [Game(messages, t, sems=get_sems(t)) for t in targets]
 
