@@ -121,34 +121,6 @@ def _classify_reference_instances(reference_instances):
 unsolvable, level0, level1, level2 = generate_classified_reference_instances()
 
 
-class Listener(object):
-
-    def __init__(self, games=None):
-        self.games = games
-
-    def interpret(game, message):
-        # produces a target (from Targets dict)
-        pass
-
-    def learn():
-        pass
-
-
-class Speaker(object):
-
-    def __init__(self, games=None):
-        self.games = games
-
-    def produce(game, target):
-        # produces a message (from Messages dict)
-        pass
-
-    def learn():
-        pass
-
-
-def play(game):
-    pass
 
 # print len(unsolvable)
 # print len(level0)
