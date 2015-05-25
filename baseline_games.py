@@ -108,7 +108,7 @@ def _create_messages_dict(F):
     messages = {'m%s' % i: list(repeat(0, F)) for i in range(F)}
 
     for i in range(F):
-        Messages['m%s' % i][i] = 1
+        messages['m%s' % i][i] = 1
 
     return messages
 
