@@ -36,7 +36,7 @@ def generate_classified_reference_instances(F=3, T=3):
 
     This function generates reference instances given F number of features and
     T number of targets. It then classifies these instances into three lists
-    corresponding to Level 0, Level 1, and Level 2 instances
+    corresponding to Level 0, Level 1, and Level 2 instances.
 
     Classification is done using the ibr_classifer.
     '''
