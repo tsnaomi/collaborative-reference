@@ -73,7 +73,7 @@ def _all_games(messages, F, T):
     vectors = [p for c in combin(range(2), F * T) for p in permutations(c)]
     targets = [get_targets(list(vector)) for vector in set(vectors)]
 
-    return [Game(messages, t, sems=get_sems(t)) for t in targets]
+    return [Game(messages, t, get_sems(t)) for t in targets]
 
 
 def _all_reference_instances(games, messages, F, T):
