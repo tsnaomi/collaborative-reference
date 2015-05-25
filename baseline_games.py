@@ -1,6 +1,5 @@
-from ibr_classifer import ibr_classifier
-
 from collections import namedtuple
+from ibr_classifer import ibr_classifier
 from itertools import (
     combinations_with_replacement as combin,
     permutations,
@@ -35,9 +34,11 @@ Sems = {
 def generate_classified_reference_instances(F=3, T=3):
     '''Generate and classify every possible reference instance.
 
-    This generates reference instances give F number of feautres and T number
-    of targets. This function returns three lists corresponding to Level 0,
-    Level 1, and Level 2 instances.
+    This function generates reference instances given F number of features and
+    T number of targets. It then classifies these instances into three lists
+    corresponding to Level 0, Level 1, and Level 2 instances
+
+    Classification is done using the ibr_classifer.
     '''
     games = _all_games(F, T)
     reference_instances = _all_reference_instances(games, F, T)
