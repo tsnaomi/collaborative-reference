@@ -1,4 +1,4 @@
-from something import ibr_classifier
+from ibr_classifer import ibr_classifier
 
 from collections import namedtuple
 from itertools import combinations_with_replacement as cwr, permutations
@@ -52,19 +52,6 @@ Sems = {
     'glasses': ['center', ],
     'mustache': ['center', 'right', ],
     }
-
-# Gsep: full set of three-target, three-feature reference games that have fully
-# separating equilibria -- can be resolved to totally unambiguous speaker and
-# listener strategies
-
-# Generate 1206 specific reference instances, where an instance is a game G, a
-# message m, and an intended target t
-
-# Classify instances by the depth of reasoning:
-#   Level 0: require only the literal semantics of messages
-#   Level 1: require reasoning about a speaker that reasons about a literal
-#            listener
-#   Level 2: require reasoning about a level 1 listener
 
 
 def all_games():

@@ -6,7 +6,7 @@ def ibr_classifier(game, message, target):
 		for m in game.messages.keys():
 			level_zero[m] = {}
 			for t in game.targets.keys():
-				if target in game.sems[message]:
+				if t in game.sems[message]:
 					level_zero[m][t] = 1.0/len(game.sems[message])
 				else:
 					level_zero[m][t] = 0
@@ -25,7 +25,7 @@ def is_solved(ibr_dict, message, target):
 	target_val = ibr_dict[message][target]
 	solved = True
 	for t in ibr_dict[message]: 
-		if t!= target and level_one[message][t] >= target_val:
+		if t!= target and ibr_dict[message][t] >= target_val:
 			solved = False
 	return solved
 			
@@ -46,10 +46,11 @@ def posterior(game,ibr_dict):
 			target_probs[t] += ibr_dict[m][t]
 	
 	for m in messages:
+		new_ibr_dict[m] = {}
 		sum = 0.0
 		for t in targets:
-			sum += target_priors[t] * ibr[m][t] / target_probs[t]
+			sum += target_priors[t] * ibr_dict[m][t] / target_probs[t] if target_probs[t] else 0
 		for t in targets:	
-			new_ibr_dict[m][t] = target_priors[t] * (ibr_dict[m][t] / target_probs[t]) / sum 
+			new_ibr_dict[m][t] = target_priors[t] * (ibr_dict[m][t] / target_probs[t]) / sum if (target_probs[t] and sum) else 0
 			
 	return new_ibr_dict
