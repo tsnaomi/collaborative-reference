@@ -40,13 +40,14 @@ def generate_classified_reference_instances(F=3, T=3):
 
     Classification is done using the ibr_classifer.
     '''
-    games = _all_games(F, T)
-    reference_instances = _all_reference_instances(games, F, T)
+    messages = Messages if F == 3 else _create_messages_dict(F=F)
+    games = _all_games(messages, F, T)
+    reference_instances = _all_reference_instances(games, messages, F, T)
 
     return _classify_reference_instances(reference_instances)
 
 
-def _all_games(F, T):
+def _all_games(messages, F, T):
     # this function produces a list of every possible Game instance, given F
     # number of features and T number of targets
 
@@ -64,19 +65,19 @@ def _all_games(F, T):
                 if f:
                     sems[i].append(k)
 
-        if f != 3 or t != 3:
-            return {'m%s' % i: sems[i] for i in range(f)}
+        if F != 3 or T != 3:
+            return {'m%s' % i: sems[i] for i in range(F)}
 
         return {'hats': sems[0], 'glasses': sems[1], 'mustache': sems[2]}
 
     vectors = [p for c in combin(range(2), F * T) for p in permutations(c)]
-    vectors = [list(v) for v in set(vectors)]
+    vectors = [list(vector) for vector in set(vectors)]
     targets = [get_targets(vector) for vector in vectors]
 
-    return [Game(Messages, t, sems=get_sems(t)) for t in targets]
+    return [Game(messages, t, sems=get_sems(t)) for t in targets]
 
 
-def _all_reference_instances(games, F, T):
+def _all_reference_instances(games, messages, F, T):
     # this function produces a list of every possible reference instance given
     # a list of games, F number of features, and T number of targets
 
@@ -86,7 +87,7 @@ def _all_reference_instances(games, F, T):
     def get_ref(game, message, target):
         return {'game': game, 'message': message, 'target': target}
 
-    messages = _create_messages_dict(F=F).keys()
+    messages = messages.keys()
     targets = Targets.keys() if T == 3 else ['t%s' % i for i in range(T)]
 
     return [get_ref(g, m, t) for g in games for m in messages for t in targets]
@@ -101,9 +102,6 @@ def _create_messages_dict(F):
     #       'm1': [0, 1, 0, 0],
     #       'm2': [0, 0, 1, 0],
     #       'm3': [0, 0, 0, 1],
-
-    if F == 3:
-        return Messages
 
     messages = {'m%s' % i: list(repeat(0, F)) for i in range(F)}
 
