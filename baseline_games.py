@@ -1,5 +1,5 @@
 from collections import namedtuple
-from ibr_classifer import ibr_classifier
+from ibr_classifier import ibr_classifier
 from itertools import (
     combinations_with_replacement as combin,
     permutations,
@@ -154,15 +154,75 @@ def play(game):
 # print len(level1)
 # print len(level2)
 
-# # IBR Classifier returns correct classifications for the following examples.
-# # This suggests that it's working as intended.
+# IBR Classifier returns correct classifications for the following examples.
+# This suggests that it's working as intended.
 
-# l0_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'hats', 'target': 'left'}
+# l0_test = {
+#     'game': Game(
+#         messages={
+#             'hats': [1, 0, 0],
+#             'mustache': [0, 0, 1],
+#             'glasses': [0, 1, 0],
+#             },
+#         targets={
+#             'right': [0, 1, 1],
+#             'center': [0, 0, 1],
+#             'left': [1, 1, 0],
+#             },
+#         sems={
+#             'hats': ['left'],
+#             'mustache': ['center', 'right'],
+#             'glasses': ['left', 'right'],
+#             }
+#         ),
+#     'message': 'hats',
+#     'target': 'left',
+#     }
 
-# l1_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'mustache', 'target': 'center'}
+# l1_test = {
+#     'game': Game(
+#         messages={
+#             'hats': [1, 0, 0],
+#             'mustache': [0, 0, 1],
+#             'glasses': [0, 1, 0],
+#             },
+#         targets={
+#             'right': [0, 1, 1],
+#             'center': [0, 0, 1],
+#             'left': [1, 1, 0],
+#             },
+#         sems={
+#             'hats': ['left'],
+#             'mustache': ['center', 'right'],
+#             'glasses': ['left', 'right'],
+#             }
+#         ),
+#     'message': 'mustache',
+#     'target': 'center',
+#     }
 
-# l2_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'glasses', 'target': 'right'}
+# l2_test = {
+#     'game': Game(
+#         messages={
+#             'hats': [1, 0, 0],
+#             'mustache': [0, 0, 1],
+#             'glasses': [0, 1, 0],
+#             },
+#         targets={
+#             'right': [0, 1, 1],
+#             'center': [0, 0, 1],
+#             'left': [1, 1, 0],
+#             },
+#         sems={
+#             'hats': ['left'],
+#             'mustache': ['center', 'right'],
+#             'glasses': ['left', 'right'],
+#             }
+#         ),
+#     'message': 'glasses',
+#     'target': 'right',
+#     }
 
-# print ibr_classifier(l0_test['game'], l0_test['message'], l0_test['target'])
-# print ibr_classifier(l1_test['game'], l1_test['message'], l1_test['target'])
-# print ibr_classifier(l2_test['game'], l2_test['message'], l2_test['target'], depth=20)
+# print ibr_classifier(**l0_test)
+# print ibr_classifier(**l1_test)
+# print ibr_classifier(depth=20, **l2_test)
