@@ -98,9 +98,9 @@ def classify_reference_instances(ref_instances=all_reference_instances()):
     for i in ref_instances:
         level[ibr_classifier(**i)].append(i)
 
-    return level[0], level[1], level[2]
+    return level[-1], level[0], level[1], level[2]
 
-level_0, level_1, level_2 = classify_reference_instances()
+unsolvable, level_0, level_1, level_2 = classify_reference_instances()
 
 
 class Listener(object):
@@ -131,15 +131,20 @@ class Speaker(object):
 
 def play(game):
     pass
+    
+# print len(unsolvable)
+# print len(level_0)
+# print len(level_1)
+# print len(level_2)
 
 # IBR Classifier returns correct classifications for the following examples. This suggests that it's working as intended.
-
-l0_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'hats', 'target': 'left'}
-
-l1_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'mustache', 'target': 'center'}
-
-l2_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'glasses', 'target': 'right'}
-
-print ibr_classifier(l0_test['game'],l0_test['message'],l0_test['target'])
-print ibr_classifier(l1_test['game'],l1_test['message'],l1_test['target'])
-print ibr_classifier(l2_test['game'],l2_test['message'],l2_test['target'])
+# 
+# l0_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'hats', 'target': 'left'}
+# 
+# l1_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'mustache', 'target': 'center'}
+# 
+# l2_test = {'game': Game(messages={'hats': [1, 0, 0], 'mustache': [0, 0, 1], 'glasses': [0, 1, 0]}, targets={'right': [0, 1, 1], 'center': [0, 0, 1], 'left': [1, 1, 0]}, sems={'hats': ['left'], 'mustache': ['center', 'right'], 'glasses': ['left', 'right']}), 'message': 'glasses', 'target': 'right'}
+# 
+# print ibr_classifier(l0_test['game'],l0_test['message'],l0_test['target'])
+# print ibr_classifier(l1_test['game'],l1_test['message'],l1_test['target'])
+# print ibr_classifier(l2_test['game'],l2_test['message'],l2_test['target'],depth=20)

@@ -23,11 +23,11 @@ def ibr_classifier(game, message, target, depth=2):
 		for t in game.targets.keys():
 			s0[t] = {}
 			for m in game.messages.keys():
-				if t in game.sems[message]:
+				if t in game.sems[m]:
 					s0[t][m] = 1.0/messages_per_target[t]
 				else:
 					s0[t][m] = 0
-		
+					
 		if is_solved(l0,message,target):
 			return 0
 		
