@@ -41,7 +41,7 @@ def generate_classified_reference_instances(F=3, T=3):
     Classification is done using the ibr_classifer.
     '''
     messages = Messages if F == 3 else _create_messages_dict(F)
-    games = _all_games(messages, F, T)
+    games = all_games(messages, F, T)
     reference_instances = _all_reference_instances(games, messages, F, T)
 
     return _classify_reference_instances(reference_instances)
@@ -49,7 +49,8 @@ def generate_classified_reference_instances(F=3, T=3):
 
 # this function produces a list of every possible Game instance, given F number
 # of features and T number of targets
-def _all_games(messages, F, T):
+def all_games(messages=Messages, F=3, T=3):
+    '''Produce a list of every possible Game instance.'''
 
     def get_targets(vector):
         if F != 3 or T != 3:
