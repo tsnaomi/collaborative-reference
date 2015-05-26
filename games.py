@@ -123,8 +123,8 @@ unsolvable, level0, level1, level2 = generate_classified_reference_instances()
 
 def Separable(game):
     # check whether a game is seperable
-    # a game is separable iff there exists a bijection between messages and targets
-    # such that each message-target pair is solvable
+    # a game is separable iff there exists a bijection between messages and
+    # targets such that each message-target pair is solvable
 
     messages = game.messages.keys()
     targets = game.targets.keys()
