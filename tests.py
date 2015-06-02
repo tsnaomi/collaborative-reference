@@ -103,7 +103,7 @@ class TestClassifier(unittest.TestCase):
             self.assertEqual(
                 test,
                 gold,
-                msg='%s\nTest: %s\nGold: %s' % (str(ref_inst), test, gold),
+                msg='\n\n%s\n\nTest: %s\nGold: %s' % (ref_inst, test, gold),
                 )
 
 
