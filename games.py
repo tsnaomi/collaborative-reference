@@ -6,6 +6,7 @@ from itertools import (
     repeat,
     )
 
+
 Game = namedtuple('Game', ['messages', 'targets', 'sems'])  # G = (M, T, [.])
 
 Features = ['hats', 'glasses', 'mustache']
@@ -19,14 +20,14 @@ Messages = {
 
 Targets = {
     # target: vector representation,
-    'left': [1, 0, 0],
-    'center': [0, 1, 1],  # targets can have multiple features
+    'left': [0, 0, 0],
+    'center': [0, 0, 1],  # targets can have multiple features
     'right': [0, 0, 1],
     }
 
 Sems = {
-    'hats': ['left', ],
-    'glasses': ['center', ],
+    'hats': [],
+    'glasses': [],
     'mustache': ['center', 'right', ],
     }
 
@@ -140,81 +141,3 @@ def Separable(game):
 
 # separable games used to self-train
 sep_games = [game for game in all_games() if Separable(game)]
-
-# print len(unsolvable)
-# print len(level0)
-# print len(level1)
-# print len(level2)
-
-# IBR Classifier returns correct classifications for the following examples.
-# This suggests that it's working as intended.
-
-# l0_test = {
-#     'game': Game(
-#         messages={
-#             'hats': [1, 0, 0],
-#             'mustache': [0, 0, 1],
-#             'glasses': [0, 1, 0],
-#             },
-#         targets={
-#             'right': [0, 1, 1],
-#             'center': [0, 0, 1],
-#             'left': [1, 1, 0],
-#             },
-#         sems={
-#             'hats': ['left'],
-#             'mustache': ['center', 'right'],
-#             'glasses': ['left', 'right'],
-#             }
-#         ),
-#     'message': 'hats',
-#     'target': 'left',
-#     }
-
-# l1_test = {
-#     'game': Game(
-#         messages={
-#             'hats': [1, 0, 0],
-#             'mustache': [0, 0, 1],
-#             'glasses': [0, 1, 0],
-#             },
-#         targets={
-#             'right': [0, 1, 1],
-#             'center': [0, 0, 1],
-#             'left': [1, 1, 0],
-#             },
-#         sems={
-#             'hats': ['left'],
-#             'mustache': ['center', 'right'],
-#             'glasses': ['left', 'right'],
-#             }
-#         ),
-#     'message': 'mustache',
-#     'target': 'center',
-#     }
-
-# l2_test = {
-#     'game': Game(
-#         messages={
-#             'hats': [1, 0, 0],
-#             'mustache': [0, 0, 1],
-#             'glasses': [0, 1, 0],
-#             },
-#         targets={
-#             'right': [0, 1, 1],
-#             'center': [0, 0, 1],
-#             'left': [1, 1, 0],
-#             },
-#         sems={
-#             'hats': ['left'],
-#             'mustache': ['center', 'right'],
-#             'glasses': ['left', 'right'],
-#             }
-#         ),
-#     'message': 'glasses',
-#     'target': 'right',
-#     }
-
-# print ibr_classifier(**l0_test)
-# print ibr_classifier(**l1_test)
-# print ibr_classifier(depth=20, **l2_test)
