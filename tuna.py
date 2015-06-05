@@ -5,6 +5,7 @@ from games import Game
 from ibr_classifier import ibr_classifier
 from itertools import product, repeat
 from math import sqrt
+from pdb import set_trace
 # from pprint import pprint
 
 
@@ -388,3 +389,7 @@ class DimensionalTuna:
         self.level0 = level[0]
         self.level1 = level[1]
         self.level2 = level[2]
+
+if __name__ == '__main__':
+    tuna = Tuna()
+    set_trace()
