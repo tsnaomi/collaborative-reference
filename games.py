@@ -1,3 +1,5 @@
+import os
+import csv
 from collections import namedtuple
 from ibr_classifier import ibr_classifier
 from itertools import (
@@ -30,6 +32,57 @@ Sems = {
     'glasses': [],
     'mustache': ['center', 'right', ],
     }
+
+def get_vogel_reference_instances():
+	filenames = os.listdir('vogel-instances')
+	level = {0: [], 1: [], 2: []}
+	for filename in filenames:
+		if filename != '.DS_Store':
+			file = open('vogel-instances/' + filename,'r')
+			reader = csv.reader(file)
+			for line in reader:
+				instance = {'game':Game(
+						messages={
+            			'hats': [1, 0, 0],
+            			'mustache': [0, 0, 1],
+            			'glasses': [0, 1, 0],
+            			},
+            			targets={
+           				'left': line[0:3],
+            			'center': line[3:6],
+            			'right': line[6:9],
+            			},
+            			sems = {
+            			'hats':[],
+            			'mustache':[],
+            			'glasses':[]}
+            			),
+            			'message':'',
+            			'target':''
+            			}
+				for t in instance['game'].targets:
+					if float(instance['game'].targets[t][0]) == 1.0:
+						instance['game'].sems['hats'].append(t)
+					if float(instance['game'].targets[t][1]) == 1.0:
+						instance['game'].sems['glasses'].append(t)
+					if float(instance['game'].targets[t][2]) == 1.0:
+						instance['game'].sems['mustache'].append(t)
+				if float(line[9:12][0]) == 1.0:
+					instance['message'] = 'hats'
+				elif float(line[9:12][1]) == 1.0:
+					instance['message'] = 'glasses'
+				else:
+					instance['message'] = 'mustache'
+				if float(line[12:15][0]) == 1.0:
+					instance['target'] = 'left'
+				elif float(line[12:15][1]) == 1.0:
+					instance['target'] = 'center'
+				else:
+					instance['target'] = 'right'
+				level[int(filename.strip('facesInstances-.csv'))].append(instance)
+	return level[0], level[1], level[2]
+
+level0, level1, level2 = get_vogel_reference_instances()
 
 
 def generate_classified_reference_instances(F=3, T=3):
@@ -115,7 +168,7 @@ def _classify_reference_instances(reference_instances):
     level = {-1: [], 0: [], 1: [], 2: []}
 
     for i in reference_instances:
-        level[ibr_classifier(**i)].append(i)
+        level[ibr_classifier(i)].append(i)
 
     return level[-1], level[0], level[1], level[2]
 
@@ -132,7 +185,7 @@ def Separable(game):
 
     for targets_in_some_order in permutations(targets):
         for message, target in zip(messages, targets_in_some_order):
-            if ibr_classifier(game, message, target) == -1:
+            if ibr_classifier({'game':game, 'message':message, 'target':target}) == -1:
                 break
         else:
             return True
