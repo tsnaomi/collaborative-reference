@@ -175,7 +175,7 @@ class Tuna:
         level = {-1: [], 0: [], 1: [], 2: []}
 
         for ref_inst in self.reference_instances:
-            level[ibr_classifier(**ref_inst)].append(ref_inst)
+            level[ibr_classifier(ref_inst)].append(ref_inst)
 
         self.unsolvable.extend(level[-1])
         self.level0.extend(level[0])
@@ -382,7 +382,7 @@ class DimensionalTuna:
         level = {-1: [], 0: [], 1: [], 2: []}
 
         for ref_inst in self.reference_instances:
-            level[ibr_classifier(**ref_inst)].append(ref_inst)
+            level[ibr_classifier(ref_inst)].append(ref_inst)
 
         self.unsolvable.extend(level[-1])
         self.level0.extend(level[0])
