@@ -187,6 +187,10 @@ class DimensionalTuna:
 
     def __init__(self, corpus=CORPUS):
         self.reference_instances = []
+        self.unsolvable = []
+        self.level0 = []
+        self.level1 = []
+        self.level2 = []
 
         self.TunaFeatures = [
             'chair', 'sofa', 'desk', 'fan',  # type
@@ -202,11 +206,6 @@ class DimensionalTuna:
 
         self.gather_reference_instances()
         self.classify()
-
-        self.unsolvable = 0
-        self.level0 = 0
-        self.level1 = 0
-        self.level2 = 0
 
     def key(self, x):
         try:
@@ -385,10 +384,10 @@ class DimensionalTuna:
         for ref_inst in self.reference_instances:
             level[ibr_classifier(**ref_inst)].append(ref_inst)
 
-        self.unsolvable = level[-1]
-        self.level0 = level[0]
-        self.level1 = level[1]
-        self.level2 = level[2]
+        self.unsolvable.extend(level[-1])
+        self.level0.extend(level[0])
+        self.level1.extend(level[1])
+        self.level2.extend(level[2])
 
 if __name__ == '__main__':
     tuna = Tuna()
