@@ -1,31 +1,31 @@
 import numpy as np
+import copy
 from collections import *
 
 Agent = namedtuple('Agent', ['mat','colnames','rownames'])
 Game = namedtuple('Game', ['messages', 'targets', 'sems'])
 
-def ibr_classifier (instance, max_depth = 2, starting_agent = None, fg = False, display = False):
+def ibr_classifier (instance, max_depth = 2, arg_max=False, starting_agent = None, fg = False, display = False):
 	game = instance['game']
 	sems = game.sems
 	inverse = inverse_sems(game)
 	messages = game.messages.keys()
 	targets = game.targets.keys()
 	
-	if not fg:
-	
-		l0 = Agent(mat=np.arange(9.0).reshape(3,3), colnames = targets, rownames = messages)
-	
-		for i in xrange(0,len(l0.rownames)):
+	l0 = Agent(mat=np.arange(9.0).reshape(3,3), colnames = targets, rownames = messages)
+
+	for i in xrange(0,len(l0.rownames)):
+		for j in xrange(0,len(l0.colnames)):
+			m = l0.rownames[i]
+			t = l0.colnames[j]
+			l0.mat[i][j] = 1.0/len(sems[m]) if t in sems[m] else 0
+		
+	for i in xrange(0,len(l0.rownames)): 
+		if np.sum(l0.mat[i]) == 0:
 			for j in xrange(0,len(l0.colnames)):
-				m = l0.rownames[i]
-				t = l0.colnames[j]
-				l0.mat[i][j] = 1.0/len(sems[m]) if t in sems[m] else 0
-			
-		for i in xrange(0,len(l0.rownames)): 
-			if np.sum(l0.mat[i]) == 0:
-				for j in xrange(0,len(l0.colnames)):
-					l0.mat[i][j] = 1.0/len(l0.colnames)
+				l0.mat[i][j] = 1.0/len(l0.colnames)
 	
+	if not fg:
 		s0 = Agent(mat=np.arange(9.0).reshape(3,3), colnames = messages, rownames = targets)
 	
 		for i in xrange(0,len(s0.rownames)):
@@ -41,23 +41,27 @@ def ibr_classifier (instance, max_depth = 2, starting_agent = None, fg = False, 
 	
 	else:
 		starting_agent = 'speaker'
-		l0 = Agent(mat=np.arange(9.0).reshape(3,3), colnames = targets, rownames = messages)
+		fg_list = Agent(mat=np.arange(9.0).reshape(3,3), colnames = targets, rownames = messages)
 	
-		for i in xrange(0,len(l0.rownames)):
-			for j in xrange(0,len(l0.colnames)):
-				m = l0.rownames[i]
-				t = l0.colnames[j]
+		for i in xrange(0,len(fg_list.rownames)):
+			for j in xrange(0,len(fg_list.colnames)):
+				m = fg_list.rownames[i]
+				t = fg_list.colnames[j]
 				sum = 0.0
 				for w in inverse[t]:
 					sum += 1.0/len(sems[w])
-				l0.mat[i][j] = (1.0/len(sems[m]))/sum if t in sems[m] else 0
+				fg_list.mat[i][j] = (1.0/len(sems[m]))/sum if t in sems[m] else 0
 			
-		for i in xrange(0,len(l0.rownames)): 
-			if np.sum(l0.mat[i]) == 0:
-				for j in xrange(0,len(l0.colnames)):
-					l0.mat[i][j] = 1.0/len(l0.colnames)
-	
-		s0 = bayes(l0)
+		for i in xrange(0,len(fg_list.rownames)): 
+			if np.sum(fg_list.mat[i]) == 0:
+				for j in xrange(0,len(fg_list.colnames)):
+					fg_list.mat[i][j] = 1.0/len(fg_list.colnames)
+
+		s0 = bayes(fg_list)
+		
+	if arg_max:
+		l0 = argmax(l0)
+		s0 = argmax(s0)
 	
 	if display:
 		print 'S0: \n'
@@ -92,6 +96,10 @@ def ibr_classifier (instance, max_depth = 2, starting_agent = None, fg = False, 
 			else:
 				raise NameError('Invalid starting agent argument.')
 			
+			if arg_max:
+				new_speaker = argmax(new_speaker)
+				new_listener = argmax(new_listener)
+			
 			if display:
 				print 'S%d: \n' % depth
 				print new_speaker
@@ -124,7 +132,22 @@ def inverse_sems(game):
 	
 	return inverse_sems
 
+def argmax(old_agent):
+	old_agent = copy.deepcopy(old_agent)
+	new_agent = Agent(mat = old_agent.mat, colnames = old_agent.colnames, rownames = old_agent.rownames)
+	
+	for row in new_agent.mat:
+		max = np.amax(row)
+		max_positions = [i for i, j in enumerate(row) if j == max]
+		if len(max_positions) == 1:
+			for i in xrange(0, len(new_agent.colnames)):
+				row[i] = 0
+			row[max_positions[0]] = 1
+	
+	return new_agent
+
 def bayes (old_agent):
+	old_agent = copy.deepcopy(old_agent)
 	new_agent = Agent(mat=np.transpose(old_agent.mat),colnames = old_agent.rownames,rownames = old_agent.colnames)
 	
 	for i in xrange(0,len(new_agent.rownames)):
