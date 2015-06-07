@@ -6,7 +6,7 @@ from ibr_classifier import ibr_classifier
 from itertools import combinations, product, repeat
 from math import sqrt
 from pdb import set_trace
-# from pprint import pprint
+from pprint import pprint
 
 
 CORPUS = 'TUNA/corpus/singular/furniture'
@@ -413,9 +413,8 @@ class RobustTuna:
             'large', 'small',  # size
             ]
 
-        self.ComplexMessages = {
-            M: self._get_complex_messages_dict(M) for M in range(1, 5)
-            }
+        self.ComplexMessages = {}
+        self.curate_complex_messages_dict()
 
         self.T = 7  # each context contains 1 target and 6 distractors
         self.F = 14
@@ -426,6 +425,38 @@ class RobustTuna:
     def key(self, x):
         # indices of type, colour, orientation, and size
         return self.TunaFeatures.index(x)
+
+    def curate_complex_messages_dict(self):
+
+        def create_features_matrix(f):
+            messages = [list(repeat(0, f)) for i in range(f + 1)]
+
+            for i in range(f):
+                messages[i][i] = 1
+
+            return messages
+
+        def flatten(li):
+            return [i for feature in li for i in feature]
+
+        def from_vector_to_message(v):
+            message = [self.TunaFeatures[i] for i, w in enumerate(v) if w]
+
+            return ' '.join(message)
+
+        FeaturesMatrices = [
+            create_features_matrix(4),  # type
+            create_features_matrix(4),  # colour
+            create_features_matrix(4),  # orientation
+            create_features_matrix(2),  # size
+            ]
+
+        MESSAGES = [flatten(p) for p in product(*FeaturesMatrices)]
+
+        for M in range(1, 5):
+            messages = filter(lambda m: m.count(1) == M, MESSAGES)
+            messages_dict = {from_vector_to_message(v): v for v in messages}
+            self.ComplexMessages.update(messages_dict)
 
     def gather_reference_instances(self):
         for dirpath, dirname, filenames in os.walk(CORPUS):
@@ -449,30 +480,28 @@ class RobustTuna:
             # create all possible target messages
             possible_target_messages = self._get_target_messages(root)
 
-            for M, target_messages in possible_target_messages.iteritems():
+            # create messages dictionary for Game
+            messages = self.ComplexMessages
 
-                # create messages dict for Game
-                messages = self.ComplexMessages[M]
+            # create semantics dictionary for Game
+            semantics = self._get_semantics_dict(referents, messages)
 
-                # create semantics dict for Game
-                sems = self._get_semantics_dict(referents, messages, M)
+            # create Game
+            game = Game(targets=referents, messages=messages, sems=semantics)
 
-                # create Game
-                game = Game(targets=referents, messages=messages, sems=sems)
+            # add game to list of all games
+            self.games.append(game)
 
-                # add game to list of all games
-                self.games.append(game)
+            for message in possible_target_messages:
 
-                for message in target_messages:
+                # create reference instance
+                ref_inst = {
+                    'game': game,
+                    'message': message,
+                    'target': target,
+                    }
 
-                    # create reference instance
-                    ref_inst = {
-                        'game': game,
-                        'message': message,
-                        'target': target,
-                        }
-
-                    yield ref_inst
+                yield ref_inst
 
         # ignore non-xml files
         except ET.ParseError:
@@ -501,7 +530,7 @@ class RobustTuna:
         return target, referents
 
     def _get_target_messages(self, root):
-        possible_target_messages = {1: [], 2: [], 3: [], 4: []}
+        possible_target_messages = []
 
         # type, colour, orientation, and size features
         entities = [e for e in root.iter('ENTITY')]
@@ -513,45 +542,15 @@ class RobustTuna:
             # for every possible combination of features that is length M
             for c in combinations(attributes, M):
                 c = ' '.join([a for a in sorted(c, key=self.key)])
-                possible_target_messages[M].append(c)
+                possible_target_messages.append(c)
 
         return possible_target_messages
 
-    def _get_complex_messages_dict(self, M):
-
-        def create_features_matrix(f):
-            messages = [list(repeat(0, f)) for i in range(f + 1)]
-
-            for i in range(f):
-                messages[i][i] = 1
-
-            return messages
-
-        def flatten(li):
-            return [i for feature in li for i in feature]
-
-        def from_vector_to_message(v):
-            message = [self.TunaFeatures[i] for i, w in enumerate(v) if w]
-
-            return ' '.join(message)
-
-        FeaturesMatrices = [
-            create_features_matrix(4),  # type
-            create_features_matrix(4),  # colour
-            create_features_matrix(4),  # orientation
-            create_features_matrix(2),  # size
-            ]
-
-        messages = [flatten(p) for p in product(*FeaturesMatrices)]
-        messages = filter(lambda m: m.count(1) == M, messages)
-        messages_dict = {from_vector_to_message(v): v for v in messages}
-
-        return messages_dict
-
-    def _get_semantics_dict(self, referents, messages, M):
+    def _get_semantics_dict(self, referents, messages):
         semantics = {m: [] for m in messages}
 
         for mk, mv in messages.iteritems():
+            M = mv.count(1)
 
             for tk, tv in referents.iteritems():
                 if len(filter(None, map(lambda t, m: t * m, tv, mv))) == M:
@@ -572,6 +571,5 @@ class RobustTuna:
 
 
 if __name__ == '__main__':
-    tuna = Tuna()
     robust = RobustTuna()
     set_trace()
