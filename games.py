@@ -167,7 +167,7 @@ def _classify_reference_instances(reference_instances):
     level = {-1: [], 0: [], 1: [], 2: []}
 
     for i in reference_instances:
-        level[ibr_classifier(i)].append(i)
+        level[ibr_classifier(i, arg_max=True)].append(i)
 
     return level[-1], level[0], level[1], level[2]
 
@@ -184,7 +184,7 @@ def Separable(game):
 
     for targets_in_some_order in permutations(targets):
         for message, target in zip(messages, targets_in_some_order):
-            if ibr_classifier({'game':game, 'message':message, 'target':target}) == -1:
+            if ibr_classifier({'game':game, 'message':message, 'target':target}, arg_max=True) == -1:
                 break
         else:
             return True
