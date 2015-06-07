@@ -48,9 +48,9 @@ def get_vogel_reference_instances():
             			'glasses': [0, 1, 0],
             			},
             			targets={
-           				'left': line[0:3],
-            			'center': line[3:6],
-            			'right': line[6:9],
+           				'left': [float(i) for i in line[0:3]],
+            			'center': [float(i) for i in line[3:6]],
+            			'right': [float(i) for i in line[6:9]],
             			},
             			sems = {
             			'hats':[],
