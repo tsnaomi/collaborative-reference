@@ -82,8 +82,7 @@ def get_vogel_reference_instances():
 				level[int(filename.strip('facesInstances-.csv'))].append(instance)
 	return level[0], level[1], level[2]
 
-level0, level1, level2 = get_vogel_reference_instances()
-
+vogel_level0, vogel_level1, vogel_level2 = get_vogel_reference_instances()
 
 def generate_classified_reference_instances(F=3, T=3):
     '''Generate and classify every possible reference instance.
