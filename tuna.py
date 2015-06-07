@@ -14,9 +14,11 @@ CORPUS = 'TUNA/corpus/singular/furniture'
 # TODO: Implement object inheritance
 
 
+# 14-dimensional vectors
 class Tuna:
 
     def __init__(self, corpus=CORPUS):
+        self.games = []
         self.reference_instances = []
         self.unsolvable = []
         self.level0 = []
@@ -75,6 +77,9 @@ class Tuna:
 
             # create reference instance
             ref_inst = {'game': game, 'message': message, 'target': target}
+
+            # add game to list of all games
+            self.games.append(game)
 
             return ref_inst
 
@@ -178,9 +183,11 @@ class Tuna:
         self.level2.extend(level[2])
 
 
+# 16-dimensional vectors
 class DimensionalTuna:
 
     def __init__(self, corpus=CORPUS):
+        self.games = []
         self.reference_instances = []
         self.unsolvable = []
         self.level0 = []
@@ -246,6 +253,9 @@ class DimensionalTuna:
 
             # create reference instance
             ref_inst = {'game': game, 'message': message, 'target': target}
+
+            # add game to list of all games
+            self.games.append(game)
 
             return ref_inst
 
@@ -385,9 +395,11 @@ class DimensionalTuna:
         self.level2.extend(level[2])
 
 
+# 14-dimensional vectors
 class RobustTuna:
 
     def __init__(self, corpus=CORPUS):
+        self.games = []
         self.reference_instances = []
         self.unsolvable = []
         self.level0 = []
@@ -442,17 +454,16 @@ class RobustTuna:
                 # create messages dict for Game
                 messages = self.ComplexMessages[M]
 
+                # create semantics dict for Game
+                sems = self._get_semantics_dict(referents, messages, M)
+
+                # create Game
+                game = Game(targets=referents, messages=messages, sems=sems)
+
+                # add game to list of all games
+                self.games.append(game)
+
                 for message in target_messages:
-
-                    # create semantics dict for Game
-                    sems = self._get_semantics_dict(referents, messages, M)
-
-                    # create Game
-                    game = Game(
-                        targets=referents,
-                        messages=messages,
-                        sems=sems,
-                        )
 
                     # create reference instance
                     ref_inst = {
@@ -561,5 +572,6 @@ class RobustTuna:
 
 
 if __name__ == '__main__':
-    tuna = RobustTuna()
+    tuna = Tuna()
+    robust = RobustTuna()
     set_trace()
