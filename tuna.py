@@ -135,9 +135,6 @@ class Tuna:
         def flatten(li):
             return [i for feature in li for i in feature]
 
-        def is_viable(m):
-            return m.count(0) + m.count(-1) == self.F - M,
-
         def from_vector_to_message(v):
             message = [self.TunaFeatures[i] for i, w in enumerate(v) if w]
 
@@ -151,7 +148,7 @@ class Tuna:
             ]
 
         messages = [flatten(p) for p in product(*FeaturesMatrices)]
-        messages = filter(is_viable, messages)
+        messages = filter(lambda m: m.count(1) == M, messages)
         messages_dict = {from_vector_to_message(v): v for v in messages}
 
         return messages_dict
@@ -388,6 +385,7 @@ class DimensionalTuna:
         self.level0.extend(level[0])
         self.level1.extend(level[1])
         self.level2.extend(level[2])
+
 
 if __name__ == '__main__':
     tuna = Tuna()
