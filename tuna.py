@@ -416,7 +416,6 @@ class RobustTuna:
         return self.TunaFeatures.index(x)
 
     def gather_reference_instances(self):
-
         for dirpath, dirname, filenames in os.walk(CORPUS):
 
             for f in filenames:
