@@ -12,7 +12,11 @@ def ibr_classifier (instance, max_depth = 2, arg_max=False, starting_agent = Non
 	messages = game.messages.keys()
 	targets = game.targets.keys()
 	
-	l0 = Agent(mat=np.arange(9.0).reshape(3,3), colnames = targets, rownames = messages)
+	dim1 = len(messages)
+	dim2 = len(targets)
+	mat_size = float(dim1 * dim2)
+	
+	l0 = Agent(mat=np.arange(mat_size).reshape(dim1,dim2), colnames = targets, rownames = messages)
 
 	for i in xrange(0,len(l0.rownames)):
 		for j in xrange(0,len(l0.colnames)):
@@ -26,7 +30,7 @@ def ibr_classifier (instance, max_depth = 2, arg_max=False, starting_agent = Non
 				l0.mat[i][j] = 1.0/len(l0.colnames)
 	
 	if not fg:
-		s0 = Agent(mat=np.arange(9.0).reshape(3,3), colnames = messages, rownames = targets)
+		s0 = Agent(mat=np.arange(mat_size).reshape(dim2,dim1), colnames = messages, rownames = targets)
 	
 		for i in xrange(0,len(s0.rownames)):
 			for j in xrange(0,len(s0.colnames)):
@@ -41,7 +45,7 @@ def ibr_classifier (instance, max_depth = 2, arg_max=False, starting_agent = Non
 	
 	else:
 		starting_agent = 'speaker'
-		fg_list = Agent(mat=np.arange(9.0).reshape(3,3), colnames = targets, rownames = messages)
+		fg_list = Agent(mat=np.arange(mat_size).reshape(dim2,dim1), colnames = targets, rownames = messages)
 	
 		for i in xrange(0,len(fg_list.rownames)):
 			for j in xrange(0,len(fg_list.colnames)):
