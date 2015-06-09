@@ -420,7 +420,6 @@ class RobustTuna:
         self.F = 14
 
         self.gather_reference_instances()
-        self.classify()
 
     def key(self, x):
         # indices of type, colour, orientation, and size
@@ -474,34 +473,50 @@ class RobustTuna:
             tree = ET.parse(filepath)
             root = tree.getroot()
 
-            # get target referent and create targets dictionary for Game
-            target, referents = self._get_target_and_referents(root)
+            # ignore games in which location is necessary to identify target
+            TRIAL = [t for t in root.iter('TRIAL')][0]
+            if TRIAL.attrib['CONDITION'] == '-LOC':
 
-            # create all possible target messages
-            possible_target_messages = self._get_target_messages(root)
+                # get target referent and create targets dictionary for Game
+                target, referents = self._get_target_and_referents(root)
 
-            # create messages dictionary for Game
-            messages = self.ComplexMessages
+                # create all possible target messages
+                possible_target_messages = self._get_target_messages(root)
 
-            # create semantics dictionary for Game
-            semantics = self._get_semantics_dict(referents, messages)
+                # create messages dictionary for Game
+                messages = self.ComplexMessages
 
-            # create Game
-            game = Game(targets=referents, messages=messages, sems=semantics)
+                # create semantics dictionary for Game
+                semantics = self._get_semantics_dict(referents, messages)
 
-            # add game to list of all games
-            self.games.append(game)
+                # create Game
+                game = Game(
+                    targets=referents,
+                    messages=messages,
+                    sems=semantics,
+                    )
 
-            for message in possible_target_messages:
+                # add game to list of all games
+                self.games.append(game)
 
-                # create reference instance
-                ref_inst = {
-                    'game': game,
-                    'message': message,
-                    'target': target,
-                    }
+                for message in possible_target_messages:
 
-                yield ref_inst
+                    # create reference instance
+                    ref_inst = {
+                        'game': game,
+                        'message': message,
+                        'target': target,
+                        }
+
+                    # classify ref_inst with ibr_classifier
+                    try:
+                        level = ibr_classifier(ref_inst)
+                        getattr(self, 'level%s' % level).append(ref_inst)
+
+                    except AttributeError:
+                        self.unsolvable.append(ref_inst)
+
+                    yield ref_inst
 
         # ignore non-xml files
         except ET.ParseError:
@@ -533,8 +548,8 @@ class RobustTuna:
         possible_target_messages = []
 
         # type, colour, orientation, and size features
-        entities = [e for e in root.iter('ENTITY')]
-        attributes = [a.attrib['VALUE'] for a in entities[0].getchildren()[:4]]
+        entities = [e for e in root.iter('ENTITY')][0]
+        attributes = [a.attrib['VALUE'] for a in entities.getchildren()[:4]]
 
         # messages can have a maximum length of 4 features
         for M in range(1, 5):
@@ -557,17 +572,6 @@ class RobustTuna:
                     semantics[mk].append(tk)
 
         return semantics
-
-    def classify(self):
-        level = {-1: [], 0: [], 1: [], 2: []}
-
-        for ref_inst in self.reference_instances:
-            level[ibr_classifier(ref_inst)].append(ref_inst)
-
-        self.unsolvable.extend(level[-1])
-        self.level0.extend(level[0])
-        self.level1.extend(level[1])
-        self.level2.extend(level[2])
 
 
 if __name__ == '__main__':
