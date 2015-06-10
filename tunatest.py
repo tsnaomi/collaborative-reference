@@ -23,9 +23,11 @@ for i in range(7):
                          check_literal="all")
     annlit.learn(litspk)
     acctlv0_A.append(EvaluateListener(annlit, tlevel0))
+    print "lv0 accuracy on actual: {0}".format(acctlv0_A[-1])
     acctlv2_A.append(EvaluateListener(annlit, tlevel2))
     acctlvx_A.append(EvaluateListener(annlit, tlevelx))
     acclv0_A.append(EvaluateListener(annlit, level0))
+    print "lv0 accuracy on all: {0}".format(acclv0_A[-1])
     acclv2_A.append(EvaluateListener(annlit, level2))
     acclvx_A.append(EvaluateListener(annlit, levelx))
 
@@ -34,9 +36,11 @@ for i in range(7):
                          check_literal=None)
     annlit.learn(litspk)
     acctlv0_N.append(EvaluateListener(annlit, tlevel0))
+    print "lv0 accuracy on actual: {0}".format(acctlv0_N[-1])
     acctlv2_N.append(EvaluateListener(annlit, tlevel2))
     acctlvx_N.append(EvaluateListener(annlit, tlevelx))
     acclv0_N.append(EvaluateListener(annlit, level0))
+    print "lv0 accuracy on actual: {0}".format(acclv0_N[-1])
     acclv2_N.append(EvaluateListener(annlit, level2))
     acclvx_N.append(EvaluateListener(annlit, levelx))
 
